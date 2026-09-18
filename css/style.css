@@ -1,0 +1,852 @@
+/* Fallback self-hosted fonts (files in /fonts) — only used if the Adobe
+   Fonts kit in index.html (use.typekit.net/trh4uyb.css) fails to load.
+   Registered with a full 100–900 weight range so any font-weight used in
+   the CSS below maps to this one static face instead of being faux-bolded. */
+@font-face{
+  font-family:"Helvetica Condensed";
+  src:url("../fonts/Helvetica-Condensed-Bold.woff2") format("woff2");
+  font-weight:100 900;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:"Helvetica Inserat";
+  src:url("../fonts/HelveticaInseratLTStd-Roman.woff2") format("woff2");
+  font-weight:100 900;
+  font-style:normal;
+  font-display:swap;
+}
+
+/* Sizes follow the Figma frame "1" (node 85:132, 1920 × 5860).
+   Horizontal paddings/gaps shrink proportionally below 1920px via clamp(). */
+:root{
+  --ink:#111111;
+  --text:#333333;
+  --paper:#ffffff;
+  --gray-bg:#f4f4f4;
+  --footer:#0e0e0e;
+  --footer-text:#bdbdbd;
+  --gutter:clamp(20px, 6.25vw, 120px);          /* 120px @1920 */
+  --section-gap:clamp(64px, 6.77vw, 130px);     /* 130px @1920 */
+  /* Adobe Fonts (Typekit) kit — "Nimbus Sans Cond L":
+       - menu         -> font-weight:300 (Light)
+       - display/CTA  -> font-weight:900 (Black) */
+  --font-condensed:"nimbus-sans-condensed","Helvetica Condensed","Arial Narrow",Arial,sans-serif;
+  --font-inserat:"nimbus-sans-condensed","Helvetica Inserat","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --font-kr:"Pretendard",-apple-system,BlinkMacSystemFont,"Malgun Gothic",sans-serif;
+  font-family:var(--font-kr);
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+}
+img{display:block;max-width:100%;}
+a{text-decoration:none;color:inherit;}
+h1,h2,h3,p,dl,dd{margin:0;}
+.container{
+  width:100%;
+  padding-left:var(--gutter);
+  padding-right:var(--gutter);
+}
+
+/* Buttons — Figma components "Frame 1/2/3": dark by default,
+   white with a dark outline on hover. */
+.btn{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  background:var(--ink);
+  color:#fff;
+  border:1px solid var(--ink);
+  font-family:var(--font-kr);
+  font-weight:500;
+  white-space:nowrap;
+  cursor:pointer;
+  transition:background-color .15s ease, color .15s ease;
+}
+.btn:hover{background:#fff;color:var(--ink);}
+.btn__arrow{font-weight:600;}
+/* Hero CTA scales with the viewport like the hero title (4.375vw) so their
+   ratio holds: Figma @1920 = 24px text, 131 × 29 content, 195 × 77 button. */
+.btn--lg{font-size:clamp(14px, 1.25vw, 24px);line-height:1.2;padding:calc(1em - 1px) calc(1.333em - 1px);}
+.btn--md{font-size:24px;line-height:1.25;padding:16px 31px;}   /* 223 × 64 */
+.btn--sm{font-size:18px;line-height:1.2;padding:11px 24px;}   /* 169 × 46 */
+
+/* Nav */
+.nav{
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:50;
+  background:rgba(255,255,255,0);
+  border-bottom:1px solid transparent;
+  transition:background-color .3s ease, border-color .3s ease, backdrop-filter .3s ease;
+}
+.nav.nav--scrolled{
+  background:rgba(255,255,255,.7);
+  backdrop-filter:saturate(180%) blur(8px);
+  border-bottom:1px solid #e7e7e7;
+}
+.nav__inner{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  column-gap:24px;
+  height:90px;
+}
+.nav__logo{grid-column:1;justify-self:start;}
+.nav__logo-img{height:52px;width:auto;}
+.nav__links{
+  display:flex;
+  gap:clamp(32px, 3.1vw, 60px);
+  font-family:var(--font-condensed);
+  font-weight:300;
+  font-size:clamp(22px, 1.667vw, 32px);
+  grid-column:2;
+  justify-self:center;
+}
+.nav__links a{text-underline-offset:6px;}
+/* Figma component "menu": hover = bold + underline */
+.nav__links a:hover,
+.nav__links a.is-active{font-weight:900;text-decoration:underline;}
+.nav__cta{
+  grid-column:3;
+  justify-self:end;
+  display:inline-flex;
+  align-items:center;
+  height:52px;
+  padding:0 23px;
+  background:var(--ink);
+  color:#fff;
+  border:1px solid var(--ink);
+  font-family:var(--font-inserat);
+  font-weight:900;
+  font-size:30px;
+  transition:background-color .15s ease, color .15s ease;
+}
+.nav__cta:hover{background:#fff;color:var(--ink);}
+/* Mobile menu — Figma "mobile" (122:171) / "mobile_menu" (122:261), 393 × 852 */
+.nav__burger{
+  display:none;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:9px;
+  background:none;
+  border:none;
+  cursor:pointer;
+  padding:8px;
+  margin-right:-8px;
+  grid-column:3;
+  justify-self:end;
+}
+.nav__burger span{width:33px;height:2px;background:var(--ink);transition:width .2s ease;}
+/* Open state: lines step down 33 / 27 / 21px, right-aligned */
+.nav.open .nav__burger span:nth-child(2){width:27px;}
+.nav.open .nav__burger span:nth-child(3){width:21px;}
+.nav__mobile{
+  display:none;
+  flex:1;
+  flex-direction:column;
+  align-items:center;
+  padding:51px 16px 92px;
+  background:#fff;
+  overflow-y:auto;
+}
+.nav__mobile a{
+  font-family:var(--font-condensed);
+  font-weight:300;
+  font-size:40px;
+  line-height:48px;
+}
+.nav__mobile a + a{margin-top:37px;}   /* 85px between item centres */
+.nav__mobile a:hover,
+.nav__mobile a.is-active{font-weight:900;text-decoration:underline;text-underline-offset:6px;}
+.nav__mobile .nav__mobile-cta{
+  margin-top:auto;
+  display:inline-flex;
+  align-items:center;
+  height:52px;
+  padding:0 23px;
+  background:var(--ink);
+  color:#fff;
+  border:1px solid var(--ink);
+  font-family:var(--font-inserat);
+  font-weight:900;
+  font-size:30px;
+  line-height:1;
+}
+.nav__mobile .nav__mobile-cta:hover{background:#fff;color:var(--ink);text-decoration:none;}
+/* Full-screen white sheet while the menu is open */
+.nav.open{
+  bottom:0;
+  display:flex;
+  flex-direction:column;
+  background:#fff;
+  backdrop-filter:none;
+  border-bottom-color:transparent;
+}
+.nav.open .nav__mobile{display:flex;}
+body.menu-open{overflow:hidden;}
+
+/* Hero — 1920 × 980 photo, copy vertically centred at left gutter */
+.hero{
+  position:relative;
+  height:clamp(560px, 51.04vw, 980px);
+  overflow:hidden;
+  background:#cfe6f3;
+  display:flex;
+  align-items:center;
+}
+/* Background photo (1920 × 1575) is placed by hand rather than object-fit:cover
+   so the crop matches the reference shots. Offsets are % of the hero width
+   (margin-top % resolves against width): PC shows the full width with the
+   spray nozzle at ~21% of the hero height; the image bottom (55%W) stays below
+   the hero (≤51%W, max 980px) for any width ≥ 1100px. */
+.hero__bg{
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:auto;
+  max-width:none;
+  margin-top:-26.8%;
+}
+.hero__content{position:relative;z-index:2;padding-top:10px;}
+.hero__content h1{
+  font-family:var(--font-inserat);
+  font-weight:900;
+  font-size:clamp(42px, 4.375vw, 84px);
+  line-height:1.07;
+  letter-spacing:-.005em;
+  margin-bottom:clamp(24px, 2.08vw, 40px);
+}
+
+/* Intro — 430px tall section */
+.intro{
+  padding-top:clamp(64px, 5.6vw, 107px);
+  padding-bottom:clamp(64px, 5.7vw, 110px);
+}
+.intro h2{
+  font-size:clamp(24px, 1.98vw, 38px);
+  font-weight:600;
+  line-height:1.35;
+  letter-spacing:-.02em;
+  margin-bottom:20px;
+}
+.intro p{
+  color:var(--text);
+  font-size:clamp(16px, 1.04vw, 20px);
+  line-height:1.6;
+  letter-spacing:-.01em;
+}
+.intro p strong{color:var(--ink);font-weight:700;}
+
+/* Brand story band — full-bleed 1920 × 706 photo */
+.brand{
+  position:relative;
+  height:clamp(360px, 36.77vw, 706px);
+  overflow:hidden;
+  background:#f2c94c;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.brand__bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  max-width:none;
+  object-fit:cover;
+}
+.brand .btn{position:relative;z-index:2;}
+
+/* Feature rows — 1020 × 570 photo + 560px copy column, 100px apart */
+.features{
+  display:flex;
+  flex-direction:column;
+  gap:var(--section-gap);
+  padding-top:var(--section-gap);
+  padding-bottom:clamp(64px, 6.98vw, 134px);
+}
+.feature{
+  display:grid;
+  grid-template-columns:minmax(0,1020fr) minmax(0,560fr);
+  column-gap:clamp(40px, 5.2vw, 100px);
+  align-items:center;
+}
+.feature--reverse{grid-template-columns:minmax(0,560fr) minmax(0,1020fr);}
+.feature--reverse .feature__media{order:2;}
+.feature__media{
+  aspect-ratio:1020 / 570;
+  max-width:100%;
+  overflow:hidden;
+  background:#ececec;
+}
+.feature__media img{width:100%;height:100%;object-fit:cover;}
+.feature__text h3{
+  font-size:clamp(24px, 1.98vw, 38px);
+  font-weight:600;
+  line-height:1.35;
+  letter-spacing:-.02em;
+  margin-bottom:10px;
+}
+.feature__text p{
+  color:var(--text);
+  font-size:clamp(16px, 1.04vw, 20px);
+  line-height:1.6;
+  letter-spacing:-.01em;
+  margin-bottom:40px;
+}
+
+/* Showcase — light gray band, 1190 × 790 photo */
+.showcase{
+  background:var(--gray-bg);
+  padding:clamp(64px, 7.55vw, 145px) var(--gutter);
+}
+.showcase__img{
+  width:100%;
+  max-width:1190px;
+  aspect-ratio:1190 / 790;
+  margin:0 auto;
+  object-fit:cover;
+  background:#e6e6e6;
+}
+
+/* Footer — Figma "Frame 24" (159:473), 1920 × 352 */
+.footer{
+  background:var(--footer);
+  color:var(--footer-text);
+  padding:81px 0 74px;
+}
+.footer__inner{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:40px;
+  flex-wrap:wrap;
+}
+/* White logo on the dark footer: invert the black logo.png
+   (white oval, black ring and lettering, like the Figma footer) */
+.footer__logo{height:45px;width:auto;margin-bottom:49px;filter:invert(1);}
+.footer__info{
+  display:flex;
+  flex-direction:column;
+  font-size:18px;
+  line-height:30px;
+  margin-bottom:19px;
+}
+.footer__info div{display:flex;}
+.footer__info dt{color:#e2e2e2;font-weight:500;min-width:157px;}
+.footer__info dd{color:var(--footer-text);}
+.footer__copy{font-size:18px;line-height:24px;color:var(--footer-text);}
+.footer__col--right{
+  text-align:right;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+}
+.footer__links{
+  display:flex;
+  gap:40px;
+  font-size:20px;
+  line-height:24px;
+  font-weight:600;
+  color:#fff;
+  margin-top:-6px;   /* links sit slightly above the logo's top edge in Figma */
+  margin-bottom:77px;
+}
+.footer__cs-title{font-size:24px;line-height:30px;font-weight:600;color:#fff;margin-bottom:10px;}
+.footer__cs-num,
+.footer__cs-time{font-size:22px;line-height:33px;color:var(--footer-text);}
+.footer__cs-time{margin-bottom:-4px;}
+
+/* ───────── Sub pages (Figma frames 2–5) ───────── */
+
+/* Page hero — Figma frames 2/3/4: 1920 × 980 photo, centred white title */
+.page-hero{
+  position:relative;
+  height:clamp(420px, 51.04vw, 980px);
+  overflow:hidden;
+  background:#c9dde6;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.page-hero__bg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  max-width:none;
+  object-fit:cover;
+}
+/* 20% black overlay between the photo and the title */
+.page-hero::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:1;
+  background:rgba(0,0,0,.2);
+}
+.page-hero h1{
+  position:relative;
+  z-index:2;
+  color:#fff;
+  font-family:var(--font-inserat);
+  font-weight:900;
+  font-size:clamp(42px, 4.375vw, 84px);
+  line-height:1.07;
+  letter-spacing:-.005em;
+  padding-top:clamp(0px, 1.04vw, 20px);
+}
+
+/* Product listing — title, category tabs, 4-column grid */
+.products{
+  padding-top:clamp(56px, 5.2vw, 100px);
+  padding-bottom:clamp(64px, 5.9vw, 113px);
+}
+.products__title{
+  font-family:var(--font-inserat);
+  font-weight:900;
+  font-size:clamp(36px, 3.02vw, 58px);
+  line-height:1;
+  text-align:center;
+  margin-bottom:clamp(40px, 4.2vw, 81px);
+}
+.tabs{
+  display:flex;
+  justify-content:center;
+  gap:clamp(8px, 2.4vw, 46px);
+  border-bottom:1px solid #cfcfcf;
+  margin-bottom:clamp(36px, 3.65vw, 70px);
+}
+.tabs__btn{
+  position:relative;
+  padding:0 clamp(8px, .94vw, 18px) clamp(16px, 1.56vw, 30px);
+  background:none;
+  border:0;
+  font-family:var(--font-kr);
+  font-size:clamp(17px, 1.354vw, 26px);
+  line-height:1.2;
+  font-weight:400;
+  color:var(--ink);
+  cursor:pointer;
+}
+.tabs__btn::after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-1px;
+  height:2px;
+  background:transparent;
+}
+.tabs__btn:hover::after{background:#999;}
+.tabs__btn.is-active{font-weight:700;}
+.tabs__btn.is-active::after{background:var(--ink);}
+
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0,1fr));
+  column-gap:16px;
+  row-gap:clamp(40px, 3.44vw, 66px);
+}
+.product-card{display:flex;flex-direction:column;}
+.product-card[hidden]{display:none;}
+.product-card__img{
+  aspect-ratio:1 / 1;
+  background:#f0f0f0;
+  overflow:hidden;
+}
+.product-card__img img{width:100%;height:100%;object-fit:cover;}
+.product-card__cat{
+  margin-top:clamp(14px, 1.4vw, 27px);
+  font-size:clamp(14px, 1.04vw, 20px);
+  line-height:1.4;
+  color:#666;
+}
+.product-card__name{
+  margin-top:2px;
+  font-size:clamp(17px, 1.25vw, 24px);
+  line-height:1.4;
+  font-weight:500;
+  letter-spacing:-.01em;
+}
+.product-card__price{
+  margin-top:clamp(16px, 1.72vw, 33px);
+  font-size:clamp(15px, 1.04vw, 20px);
+  line-height:1.4;
+  font-weight:700;
+}
+.product-card__vol{
+  margin-top:clamp(4px, .57vw, 11px);
+  font-size:clamp(14px, 1.04vw, 20px);
+  line-height:1.4;
+}
+.product-card__desc{
+  margin-top:clamp(2px, .42vw, 8px);
+  font-size:clamp(14px, 1.04vw, 20px);
+  line-height:1.4;
+  letter-spacing:-.01em;
+}
+/* Figma component "Frame 37": 제품 전성분 ⌄ / ⌃ */
+/* margin-bottom:auto keeps the 구매하기 buttons aligned when copy wraps */
+.product-card__ing{margin-top:clamp(8px, .89vw, 17px);margin-bottom:auto;}
+.product-card__ing summary{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  list-style:none;
+  cursor:pointer;
+  font-size:clamp(13px, .94vw, 18px);
+  line-height:1.45;
+  color:#888;
+}
+.product-card__ing summary::-webkit-details-marker{display:none;}
+.product-card__ing summary::after{
+  content:"";
+  width:.45em;
+  height:.45em;
+  border-right:1.5px solid currentColor;
+  border-bottom:1.5px solid currentColor;
+  transform:translateY(-25%) rotate(45deg);
+}
+.product-card__ing[open] summary::after{transform:translateY(25%) rotate(-135deg);}
+.product-card__ing p{
+  margin-top:8px;
+  font-size:clamp(13px, .9vw, 17px);
+  line-height:1.4;
+  color:#333;
+}
+.btn--buy{
+  align-self:flex-start;
+  margin-top:clamp(20px, 2.14vw, 41px);
+  font-size:clamp(14px, .9vw, 17px);
+  line-height:1.2;
+  padding:calc(.75em - 1px) calc(1.4em - 1px);   /* 110 × 46 @1920 */
+}
+
+/* Contact — Figma frame 5 */
+.contact{
+  padding-top:clamp(150px, 8.85vw, 170px);   /* fixed 90px nav + title gap */
+  padding-bottom:clamp(96px, 13.2vw, 253px);
+}
+.contact__title{
+  font-family:var(--font-inserat);
+  font-weight:900;
+  font-size:clamp(44px, 3.54vw, 68px);
+  line-height:1;
+}
+.contact__lead{
+  margin-top:12px;
+  font-size:clamp(17px, 1.25vw, 24px);
+  line-height:1.4;
+}
+.contact__heading{
+  font-size:clamp(22px, 1.667vw, 32px);
+  line-height:1.375;
+  font-weight:600;
+  letter-spacing:-.01em;
+}
+.contact__cols{
+  display:grid;
+  grid-template-columns:minmax(0,423px) minmax(0,1fr);
+  gap:32px 0;
+  margin-top:clamp(56px, 5.57vw, 107px);
+}
+.contact__list{margin-top:clamp(16px, 1.6vw, 31px);}
+.contact__list dt{
+  font-size:clamp(16px, 1.25vw, 24px);
+  line-height:1.42;
+  color:#777;
+}
+.contact__list dd{
+  font-size:clamp(18px, 1.46vw, 28px);
+  line-height:1.29;
+  margin-bottom:6px;
+}
+.contact__map-section{margin-top:clamp(56px, 5.63vw, 108px);}
+.office{margin-top:clamp(24px, 2.24vw, 43px);}
+.office + .office{margin-top:clamp(56px, 6.04vw, 116px);}
+/* <img> placeholder or Google Maps <iframe> (keyless embed: maps.google.com/maps?q=주소&output=embed) */
+iframe.office__map{display:block;border:0;}
+.office__map{
+  width:100%;
+  aspect-ratio:1680 / 450;
+  object-fit:cover;
+  background:#eee;
+}
+.office__info{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  margin-top:clamp(16px, 2.19vw, 42px);
+  font-size:clamp(17px, 1.25vw, 24px);
+  line-height:1.4;
+}
+.office__label,
+.office__tel-label{font-size:clamp(14px, 1.04vw, 20px);color:#777;}
+.office__label{margin-right:clamp(12px, 1.67vw, 32px);}
+.office__tel-label{margin-left:clamp(20px, 2.92vw, 56px);margin-right:clamp(8px, .83vw, 16px);}
+
+/* ───────── Brand page — Figma node 163:289 (1920 × 8542) ─────────
+   Every desktop size is written as N * --u, where --u is 1px at 1920px wide
+   and shrinks proportionally below that, so the composition keeps its
+   proportions on smaller desktops. Display titles use Anton (Google Fonts),
+   the closest free match to the condensed face in the Figma file. */
+.brand-page{--u:calc(min(100vw, 1920px) / 1920);}
+.bp-wrap{padding-left:calc(120 * var(--u));padding-right:calc(120 * var(--u));}
+.bp-label{
+  font-family:var(--font-condensed);
+  font-weight:900;
+  font-size:max(12px, calc(18 * var(--u)));
+  line-height:calc(28 * var(--u));
+  letter-spacing:.01em;
+}
+.bp-label-sub{
+  font-size:max(12px, calc(18 * var(--u)));
+  line-height:calc(28 * var(--u));
+  margin-right:calc(59 * var(--u));
+}
+.bp-title{
+  font-family:"Anton","nimbus-sans-condensed","Helvetica Inserat",Impact,sans-serif;
+  font-weight:400;
+  letter-spacing:-.02em;
+  color:var(--ink);
+  white-space:nowrap;   /* lines are broken with <br>; absolute columns must not re-wrap them */
+}
+.bp-title--xl{font-size:calc(256 * var(--u));line-height:1.02;}
+.bp-title--lg{font-size:calc(225 * var(--u));line-height:1.04;}
+.bp-title--lg2{font-size:calc(177 * var(--u));line-height:1.045;}
+.bp-title--md{font-size:calc(137 * var(--u));line-height:1.04;}
+.bp-text{
+  font-size:max(14px, calc(24 * var(--u)));
+  line-height:calc(40 * var(--u));
+  letter-spacing:-.02em;
+  color:var(--text);
+}
+.bp-text p + p{margin-top:calc(40 * var(--u));}
+.bp-lead{font-size:max(15px, calc(36 * var(--u)));line-height:calc(55 * var(--u));font-weight:700;letter-spacing:-.02em;}
+.bp-heading{font-size:max(15px, calc(36 * var(--u)));line-height:calc(50 * var(--u));font-weight:700;letter-spacing:-.02em;}
+.bp-heading-lg{font-size:max(16px, calc(40 * var(--u)));line-height:calc(55 * var(--u));font-weight:700;letter-spacing:-.02em;}
+.bp-heading-xl{font-size:max(18px, calc(54 * var(--u)));line-height:calc(76 * var(--u));font-weight:700;letter-spacing:-.02em;}
+.bp-img{overflow:hidden;background:#e9e9e9;}
+.bp-img img{width:100%;height:100%;object-fit:cover;}
+
+/* 1. Hero (0–1605, white) */
+.bp-hero{padding-top:calc(176 * var(--u));padding-bottom:calc(117 * var(--u));}
+.bp-labels{display:flex;justify-content:space-between;align-items:center;}
+.bp-hero__body{position:relative;margin-top:calc(66 * var(--u));}
+.bp-hero__copy{position:absolute;left:calc(1184 * var(--u));top:calc(79 * var(--u));}
+.bp-hero__copy .bp-text{margin-top:calc(25 * var(--u));}
+.bp-hero__img{margin-top:calc(60 * var(--u));height:calc(590 * var(--u));}
+.bp-captions{
+  display:flex;
+  justify-content:space-between;
+  margin-top:calc(20 * var(--u));
+  font-size:max(12px, calc(18 * var(--u)));
+  line-height:calc(26 * var(--u));
+  color:var(--text);
+}
+.bp-captions__right{margin-right:calc(108 * var(--u));}
+
+/* 2. Philosophy (1605–2828, bubble photo) */
+.bp-philosophy{position:relative;overflow:hidden;background:#dcecf5;}
+.bp-philosophy__bg,
+.bp-banner__bg{position:absolute;inset:0;width:100%;height:100%;max-width:none;object-fit:cover;}
+/* padding-bottom counts from the left column; the right copy is absolutely positioned */
+.bp-philosophy__inner{position:relative;padding-top:calc(102 * var(--u));padding-bottom:calc(248 * var(--u));}
+.bp-philosophy .bp-title{margin-top:calc(72 * var(--u));}
+.bp-philosophy__row{position:relative;margin-top:calc(98 * var(--u));}
+.bp-chip{
+  display:inline-block;
+  background:var(--ink);
+  color:#fff;
+  font-family:var(--font-condensed);
+  font-weight:900;
+  font-size:max(11px, calc(16 * var(--u)));
+  line-height:calc(26 * var(--u));
+  padding:0 calc(18 * var(--u));
+}
+.bp-philosophy .bp-heading-xl{margin-top:calc(29 * var(--u));}
+.bp-philosophy__text{position:absolute;left:calc(920 * var(--u));top:calc(-19 * var(--u));}
+
+/* 3–5. White body (2828–7165) */
+.bp-white{padding-top:calc(139 * var(--u));padding-bottom:calc(175 * var(--u));}
+.bp-split{position:relative;}
+.bp-split--a{margin-top:calc(55 * var(--u));min-height:calc(561 * var(--u));}
+.bp-img--easy{width:calc(914 * var(--u));height:calc(561 * var(--u));}
+.bp-easy{position:absolute;left:calc(1034 * var(--u));top:calc(44.5 * var(--u));}
+.bp-easy .bp-heading{margin-top:calc(40 * var(--u));}
+.bp-easy .bp-text{margin-top:calc(34 * var(--u));}
+.bp-split--b{margin-top:calc(79 * var(--u));min-height:calc(542.5 * var(--u));}
+.bp-powerful{padding-top:calc(12.3 * var(--u));}
+.bp-powerful .bp-heading-lg{margin-top:calc(50 * var(--u));}
+.bp-img--powerful{position:absolute;top:0;left:calc(1034 * var(--u));width:calc(646 * var(--u));height:calc(532 * var(--u));}
+
+.bp-values{margin-top:calc(198.5 * var(--u));}
+.bp-values__list{list-style:none;margin:calc(56 * var(--u)) 0 0;padding:0;border-top:1px solid #1a1a1a;}
+.bp-values__list li{
+  position:relative;
+  display:flex;
+  align-items:center;
+  height:calc(289 * var(--u));
+  border-bottom:1px solid #1a1a1a;
+}
+.bp-values__num{
+  width:calc(86 * var(--u));
+  flex:none;
+  font-family:var(--font-condensed);
+  font-weight:900;
+  font-size:max(12px, calc(18 * var(--u)));
+}
+.bp-values__word{line-height:1;letter-spacing:.01em;}
+.bp-values__list .bp-text{position:absolute;left:calc(1118 * var(--u));top:50%;transform:translateY(-50%);}
+
+.bp-goal{margin-top:calc(275 * var(--u));}
+.bp-goal .bp-title{margin-top:calc(65 * var(--u));}
+.bp-goal__heading{margin-top:calc(74 * var(--u));font-size:max(15px, calc(38 * var(--u)));line-height:calc(53 * var(--u));}
+.bp-split--c{margin-top:calc(110.5 * var(--u));}
+.bp-img--goal{width:calc(920 * var(--u));height:calc(634 * var(--u));}
+.bp-goal__text{position:absolute;left:calc(1063 * var(--u));top:calc(35 * var(--u));}
+/* Absolutely placed copy keeps the Figma line breaks (<br>) instead of re-wrapping */
+.bp-hero__copy,.bp-philosophy__text,.bp-easy,.bp-values__list .bp-text,.bp-goal__text{white-space:nowrap;}
+
+/* 6. Closing banner (1033 tall, photo) */
+.bp-banner{position:relative;overflow:hidden;background:#b9a98c;color:#fff;}
+/* banner.jpg already has the dark tint baked in, so no extra overlay here */
+.bp-banner__inner{position:relative;z-index:1;padding-top:calc(99 * var(--u));padding-bottom:calc(90 * var(--u));}
+.bp-banner .bp-title{color:#fff;margin-top:calc(88 * var(--u));}
+.bp-banner__foot{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:calc(114 * var(--u));
+  padding-top:calc(55 * var(--u));
+  border-top:1px solid rgba(255,255,255,.7);
+  font-size:max(14px, calc(25 * var(--u)));
+  line-height:calc(36 * var(--u));
+}
+.bp-banner__logo{font-family:var(--font-inserat);font-weight:900;font-size:max(18px, calc(40 * var(--u)));line-height:1;}
+
+/* Brand page — tablet & phone: stack everything in one column */
+@media (max-width:860px){
+  .brand-page{--u:1px;}
+  .bp-wrap{padding-left:20px;padding-right:20px;}
+  .bp-label,.bp-label-sub,.bp-captions,.bp-values__num{font-size:13px;line-height:20px;}
+  .bp-label-sub{margin-right:0;}
+  .bp-title,.bp-hero__copy,.bp-philosophy__text,.bp-easy,.bp-values__list .bp-text,.bp-goal__text{white-space:normal;}
+  .bp-title--xl{font-size:21vw;}
+  .bp-title--lg{font-size:14vw;}
+  .bp-title--lg2{font-size:12vw;}
+  .bp-title--md{font-size:13vw;}
+  .bp-text{font-size:15px;line-height:1.7;}
+  .bp-text p + p{margin-top:1.2em;}
+  .bp-lead,.bp-heading,.bp-goal__heading{font-size:20px;line-height:1.45;}
+  .bp-heading-lg{font-size:22px;line-height:1.45;}
+  .bp-heading-xl{font-size:26px;line-height:1.4;}
+
+  .bp-hero{padding-top:100px;padding-bottom:56px;}
+  .bp-hero__body{margin-top:28px;}
+  .bp-hero__copy{position:static;margin-top:28px;}
+  .bp-hero__copy .bp-text{margin-top:14px;}
+  .bp-hero__img{margin-top:32px;height:auto;aspect-ratio:1680 / 590;}
+  .bp-captions{flex-direction:column;gap:4px;margin-top:12px;}
+  .bp-captions__right{margin-right:0;}
+
+  .bp-philosophy__inner{padding-top:56px;padding-bottom:64px;}
+  .bp-philosophy .bp-title{margin-top:24px;}
+  .bp-philosophy__row{margin-top:36px;}
+  .bp-chip{font-size:12px;line-height:22px;padding:0 10px;}
+  .bp-philosophy .bp-heading-xl{margin-top:14px;}
+  .bp-philosophy__text{position:static;margin-top:24px;}
+
+  .bp-white{padding-top:64px;padding-bottom:72px;}
+  .bp-split--a,.bp-split--b,.bp-split--c{min-height:0;margin-top:24px;}
+  .bp-img--easy,.bp-img--powerful,.bp-img--goal{position:static;width:100%;height:auto;}
+  .bp-img--easy{aspect-ratio:914 / 561;}
+  .bp-img--powerful{aspect-ratio:646 / 532;margin-top:24px;}
+  .bp-img--goal{aspect-ratio:920 / 634;}
+  .bp-easy{position:static;margin-top:28px;}
+  .bp-easy .bp-heading{margin-top:14px;}
+  .bp-easy .bp-text{margin-top:12px;}
+  .bp-split--b{margin-top:64px;}
+  .bp-powerful{padding-top:0;}
+  .bp-powerful .bp-heading-lg{margin-top:16px;}
+
+  .bp-values{margin-top:80px;}
+  .bp-values__list{margin-top:20px;}
+  .bp-values__list li{flex-wrap:wrap;height:auto;padding:22px 0;column-gap:12px;}
+  .bp-values__num{width:auto;}
+  .bp-values__list .bp-text{position:static;transform:none;flex-basis:100%;margin-top:8px;}
+
+  .bp-goal{margin-top:80px;}
+  .bp-goal .bp-title{margin-top:20px;}
+  .bp-goal__heading{margin-top:18px;}
+  .bp-goal__text{position:static;margin-top:24px;}
+
+  .bp-banner__inner{padding-top:48px;padding-bottom:36px;}
+  .bp-banner .bp-title{margin-top:40px;}
+  .bp-banner__foot{margin-top:48px;padding-top:20px;font-size:14px;line-height:22px;}
+  .bp-banner__logo{font-size:22px;}
+}
+
+/* Responsive */
+/* Line breaks that only apply on phones */
+.br-mobile{display:none;}
+@media (max-width:1100px){
+  .nav__links,.nav__cta{display:none;}
+  .nav__burger{display:flex;}
+  .nav__inner{height:62px;padding-left:16px;padding-right:16px;}  .nav__logo-img{height:35px;}
+  /* Hero is a fixed 560px tall here, so the hand-placed crop can't cover it */
+  .hero__bg{inset:0;left:0;width:100%;height:100%;margin-top:0;object-fit:cover;object-position:85% 72%;}
+}
+@media (max-width:860px){
+  .feature,.feature--reverse{grid-template-columns:1fr;row-gap:28px;}
+  .feature--reverse .feature__media{order:0;}
+  .feature__text p{margin-bottom:28px;}
+  .btn--lg{font-size:16px;padding:14px 21px;}
+  .btn--md{font-size:20px;padding:12px 24px;}
+  .btn--sm{font-size:16px;padding:10px 20px;}
+  /* Mobile footer — Figma "Frame 39": one column in the order
+     logo → SNS links → 고객센터 → 문의/회사 정보 → copyright.
+     The two desktop columns dissolve (display:contents) so `order` can interleave them. */
+  .footer{padding:60px 0 54px;}
+  .footer__inner{flex-direction:column;align-items:flex-start;flex-wrap:nowrap;gap:0;padding-left:30px;padding-right:30px;}
+  .footer__col,
+  .footer__col--right{display:contents;}
+  .footer__logo{order:1;margin-bottom:28px;}
+  .footer__links{order:2;margin:0 0 61px;}
+  .footer__cs{order:3;text-align:left;margin-bottom:57px;}
+  .footer__cs-title{margin-bottom:5px;}
+  .footer__cs-time{margin-bottom:0;}
+  .footer__info{order:4;margin-bottom:25px;line-height:22px;}
+  .footer__info div{flex-direction:column;}
+  .footer__info div + div{margin-top:12px;}
+  .footer__info dt{min-width:0;color:#fff;font-weight:600;}
+  .footer__copy{order:5;}
+  .product-grid{grid-template-columns:repeat(2, minmax(0,1fr));column-gap:12px;}
+  .contact__cols{grid-template-columns:1fr;}
+  .office__map{aspect-ratio:16 / 9;}
+}
+@media (max-width:520px){
+  .br-mobile{display:inline;}
+  /* Mobile hero: taller, copy near the top, photo zoomed onto the spray bottle */
+  .hero{height:180vw;align-items:flex-start;}
+  .hero__content{padding-top:36vw;}
+  /* "by Performance," must stay on one line: keep it unbroken and shrink the
+     title on narrow phones (that phrase is ~5.74em wide; 5.95 leaves slack) */
+  .hero__content h1{font-size:min(42px, calc((100vw - 2 * var(--gutter)) / 5.95));}
+  .hero__content h1 .nowrap{white-space:nowrap;}
+  /* Zoomed onto the bottle: BATHROOM label at ~45% across; image bottom 193vw > hero 180vw */
+  .hero__bg{inset:auto;top:0;left:-139%;width:271%;height:auto;margin-top:-30%;object-fit:fill;}
+  .btn--lg{font-size:16px;padding:10px 20px;}
+}
