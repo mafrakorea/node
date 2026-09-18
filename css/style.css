@@ -316,7 +316,11 @@ body.menu-open{overflow:hidden;}
   aspect-ratio:1190 / 790;
   margin:0 auto;
   object-fit:cover;
+  /* showcase.mp4 is portrait (1080×1920): bias the crop upward so the
+     sprayer nozzle and hand stay in frame along with the label */
+  object-position:50% 40%;
   background:#e6e6e6;
+  display:block;
 }
 
 /* Footer — Figma "Frame 24" (159:473), 1920 × 352 */

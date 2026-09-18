@@ -122,7 +122,10 @@
 
   <!-- Big product shot -->
   <section class="showcase">
-    <img class="showcase__img" src="img/showcase.jpg" alt="Kitchen Grease Remover를 인덕션 위에 분사하는 모습">
+    <!-- Muted looping clip; poster (the old still) shows until the video plays or if it's missing -->
+    <video class="showcase__img" autoplay muted loop playsinline preload="metadata" poster="img/showcase.jpg" aria-label="Kitchen Grease Remover를 인덕션 위에 분사하는 모습">
+      <source src="video/showcase.mp4" type="video/mp4">
+    </video>
   </section>
 
 </main>

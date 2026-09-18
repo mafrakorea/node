@@ -39,6 +39,13 @@ document.addEventListener('DOMContentLoaded', () => {
     observer.observe(hero);
   }
 
+  // Respect "reduce motion": don't autoplay the showcase clip.
+  const showcaseVideo = document.querySelector('video.showcase__img');
+  if (showcaseVideo && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    showcaseVideo.removeAttribute('autoplay');
+    showcaseVideo.pause();
+  }
+
   // Product category tabs (cleaners.html / tools.html).
   // ?category=bathroom|kitchen|living preselects a tab.
   const tabs = document.querySelectorAll('.tabs__btn');
